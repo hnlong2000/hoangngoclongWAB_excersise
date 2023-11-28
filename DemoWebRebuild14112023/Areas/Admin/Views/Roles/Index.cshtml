@@ -1,0 +1,67 @@
+﻿@model IEnumerable<DatabaseFirstDemo.Models.Role>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <section class="panel">
+            <header class="panel-heading">
+                Danh mục phân quyền
+            </header>
+            <div class="panel-body">
+                <div class="col-md-12">
+                    <p>
+                        <a asp-action="Create" class="btn btn-danger create">Thêm mới</a>
+                    </p>
+                    @{
+                        if (TempData["AlertMessage"] != null)
+                        {
+                            <div id="alertBox" class="alert @TempData["Type"]">
+                                @TempData["AlertMessage"]
+                            </div>
+                        }
+                    }
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Name)
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+                                    <td>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-danger">Edit</a> |
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger create">Delete</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+
+
+        $(function () {
+            $('#alertBox').removeClass('hide');
+            $('#alertBox').delay(5000).slideUp(500);
+        })
+    </script>
+}
