@@ -87,7 +87,7 @@ namespace DemoWebRebuild14112023.Areas.Admin.Controllers
             {
                 return Json(new { success = false,message = ex.Message});   
             }
-            return Json(new {success = false});
+            return Json(new {success = true});
         }
 
 
