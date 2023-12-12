@@ -361,3 +361,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/DemoWebRebuild14112023/DemoWebRebuild14112023.csproj
