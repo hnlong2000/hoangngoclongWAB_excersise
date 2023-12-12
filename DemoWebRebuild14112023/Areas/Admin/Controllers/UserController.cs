@@ -1,6 +1,8 @@
 ﻿using DatabaseFirstDemo.DAO;
 using DatabaseFirstDemo.Models;
 using DatabaseFirstDemo.Repository;
+using DemoWebRebuild14112023.Areas.Admin.Controllers;
+using DemoWebRebuild14112023.Areas.Admin.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,21 +10,24 @@ using System.Data;
 using System.Drawing.Printing;
 using DemoWebRebuild14112023.Areas.Admin.Models;
 using X.PagedList;
-using X.PagedList.Mvc.Core;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DemoWebRebuild14112023.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
+    [Authorize(AuthenticationSchemes = "Admin")]
+
     public class UsersController : BaseController
     {
         IUsersRepository userRepository = null;
         IRolesRepository roleRepository = null;
         public UsersController()
         {
-            userRepository = new UserRepository();
+            userRepository = new UsersRepository();
             roleRepository = new RolesRepository();
         }
-        public IActionResult Index(string? searchString, int? page, string sortBy)
+        public IActionResult Index(string? searchString, int? page, string sortBy, int? roleId)
         {
 
             // Lấy danh sách quyền truy cập từ Repository hoặc Database
@@ -41,7 +46,7 @@ namespace DemoWebRebuild14112023.Areas.Admin.Controllers
                  searchString = searchString.ToLower();*/
             TempData["searchString"] = searchString != null ? searchString.ToLower() : "";
             //usersdetail = userRepository.GetUserDetailByKeyword(searchString);
-            users = userRepository.GetUserByKeyword(searchString, sortBy).ToList();
+            users = userRepository.GetUserByKeyword(searchString, sortBy, roleId).ToList();
             /*   }
                else
                {
@@ -65,6 +70,7 @@ namespace DemoWebRebuild14112023.Areas.Admin.Controllers
             roleUser.Users = users.ToPagedList(pageNumber, pageSize);
             return View(roleUser);
         }
+
 
         // GET: Admin/Roles/Create
         public IActionResult Create()

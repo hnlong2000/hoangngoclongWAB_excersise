@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using System.Security.Claims;
 
 namespace DemoWebRebuild14112023.Areas.Admin.Controllers
 {
     public class BaseController : Controller
     {
-        protected void SetAlert(string msg, string type)
+        public void SetAlert(string msg, string type)
         {
             TempData["AlertMessage"] = msg;
             if (type == "success")

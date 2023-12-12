@@ -24,6 +24,8 @@ namespace DatabaseFirstDemo.Repository
         void UpdateUserDetail(UserDetail userDetail);
         UserDetail GetByUserDetailId(int? id);
         List<UserDetail> GetUserDetailByKeyword(string keyword);
-        List<User> GetUserByKeyword(string keyword, string sortBy);
+        List<User> GetUserByKeyword(string keyword, string sortBy, int? roleId);
+        User CheckLogin(string username, string password);
+        User GetByUserName(string username);
     }
 }

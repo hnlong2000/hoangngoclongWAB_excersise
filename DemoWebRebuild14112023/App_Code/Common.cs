@@ -31,7 +31,7 @@
         /// Get Ngày giờ server
         /// Output: Ngày giờ được lấy tại Server
         /// </summary>
-        public DateTime GetServerDateTime()
+        public static DateTime GetServerDateTime()
         {
             return DateTime.Now.ToUniversalTime().AddHours(7);
         }

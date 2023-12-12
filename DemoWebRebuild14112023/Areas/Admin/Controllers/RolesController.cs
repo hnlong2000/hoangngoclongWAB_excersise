@@ -1,13 +1,16 @@
 ﻿using DatabaseFirstDemo.Models;
 using DatabaseFirstDemo.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace DemoWebRebuild14112023.Areas.Admin.Controllers
 {
-    
-        [Area("Admin")]
-        public class RolesController : BaseController
+
+    [Area("Admin")]
+    [Authorize(Roles = "Admin")]
+    [Authorize(AuthenticationSchemes = "Admin")]
+    public class RolesController : BaseController
         {
             private readonly Batch177179Context _context;
 

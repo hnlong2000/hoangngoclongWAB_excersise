@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel;
+using Microsoft.AspNetCore.Http;
 
 namespace DatabaseFirstDemo.Models;
 
@@ -15,7 +18,7 @@ public partial class News
 
     public string? SubjectContent { get; set; }
 
-    public DateTime? DateUpdate { get; set; }
+    public DateTime DateUpdate { get; set; }
 
     public bool Status { get; set; }
 
@@ -26,4 +29,8 @@ public partial class News
     public virtual NewsCategory Category { get; set; } = null!;
 
     public virtual User? User { get; set; }
+
+    [NotMapped]
+    [DisplayName("Upload File")]
+    public IFormFile ImageFile { get; set; }
 }

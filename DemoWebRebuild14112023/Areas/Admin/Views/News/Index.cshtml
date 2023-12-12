@@ -1,0 +1,259 @@
+﻿@model IEnumerable<DatabaseFirstDemo.Models.News>
+
+@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+@{
+    ViewData["Title"] = "Quản lý Tin tức";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <section class="panel">
+            <header class="panel-heading">
+                Quản lý Tin tức
+            </header>
+            <div class="panel-body">
+                <div class="col-md-12" style="margin-top:10px">
+                    <p>
+                        <a class="btn btn-danger create">Tạo mới</a>
+                    </p>
+                    @{
+                        if (TempData["AlertMessage"] != null)
+                        {
+                            <div id="alertBox" class="alert @TempData["Type"]">
+                                @TempData["AlertMessage"]
+                            </div>
+                        }
+                    }
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Title)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Descripition)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.SubjectContent)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.DateUpdate)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Status)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Avatar)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Category)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.User)
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Title)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Descripition)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SubjectContent)
+                                    </td>
+                                    <td>
+                                        @item.DateUpdate.ToString("dd/MM/yyyy")
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Status)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Avatar)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Category.CategoryName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.User.Password)
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-danger edit" data-id="@item.Id">Sửa</button>&nbsp;
+                                        <button class="btn btn-danger detail" data-id="@item.Id">Chi tiết</button>&nbsp;
+                                        <a class="btn btn-danger delete" data-id="@item.Id">Xoá</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="pull-right">
+                        @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new {page = page,
+                        SearchString = @Context.Request.Query["SearchString"], sortby = @Context.Request.Query["sortby"]}),
+                        new X.PagedList.Web.Common.PagedListRenderOptions {
+                        LiElementClasses = new string[] {"page-item"},
+                        PageClasses = new string[] { "page-link" }
+                        })
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<div id="modal-form" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <form id="form-news" method="post" action="#" enctype="multipart/form-data">
+                    <div class="alert alert-danger hidden" id="alert-fail"></div>
+                    <div class="form-group">
+                        <label for="Title">Tiêu đề</label>
+                        <input type="text" class="form-control" id="Title" name="Title" placeholder="Nhập tiêu đề bài viết" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="Description">Mô tả</label>
+                        <input type="text" class="form-control" id="Description" name="Description" placeholder="Nhập mô tả">
+                    </div>
+                    <div class="form-group">
+                        <label for="SubjectContent">Nội dung</label>
+                        <input type="text" class="form-control" id="SubjectContent" name="SubjectContent" placeholder="Nhập nội dung tin" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="CategoryId">Danh mục tin tức</label>
+                        @Html.DropDownList("CategoryId", (SelectList)ViewBag.NewsCategory, new { @class =
+                        "form-control", @id = "cboNewsCategoryId" })
+                    </div>
+                    <div class="form-group">
+                        <label for="Avatar">Ảnh đại diện</label>
+                        <img id="preview" src="@Url.Content(ViewBag.Anh==null?"~/Admin/images/avatar1.jpg":"~/Upload/images/"+ViewBag.Anh)" class="rounded-circle" height="40" width="40" />
+                        <input type="file" name="file" id="fileInput">
+                        <button type="button" id="uploadButton">Upload</button>
+                        <input type="hidden" id="ImageFile" name="ImageFile" />
+                        @*  <input type="text" class="form-control" id="Avatar" name="Avatar" placeholder="Nhập địa chỉ ảnh đại diện" required> *@
+                    </div>
+                    <div class="form-group">
+                        <label for="DateUpdate">Ngày cập nhật</label>
+                        <input type="text" disabled class="form-control" id="DateUpdate" name="DateUpdate" placeholder="Nhập ngày cập nhật" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="Status">Trạng thái</label>
+                        @Html.CheckBox("Status", true)
+                    </div>
+
+                    <input type="hidden" id="Id" name="Id" />
+                    <input type="hidden" id="UserId" name="UserId" />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" id="btn-save">Lưu lại</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Modal -->
+<div class="modal fade" id="modal-delete" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc muốn xóa mục này?
+                <!-- Hidden field to store the id of the product -->
+                <input type="hidden" id="delete-id">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" id="btn-delete">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-fail" tabindex="1" role="dialog" aria-labelledby="failModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                Yêu cầu nhập đầy đủ thông tin vào Form
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="processing-preview hidden">
+</div>
+@section scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    @{
+        DateTime date = DateTime.Now;
+    }
+    <script src="~/admin/js/controllers/newsController.js?v=@date.Ticks"></script>
+    <script>
+        /*
+        $(document).ready(function () {
+            $('#form-news').validate({
+                submitHandler: function (form) {
+                    $.ajax({
+                        url: $(form).data('action'),
+                        type: 'POST',
+                        data: $(form).serialize(),
+                        success: function (response) {
+                            if (response.success) {
+                                location.reload();
+                            } else {
+                                alert(response.message);
+                            }
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        }
+                    });
+                }
+            });
+        });*/
+        $(function () {
+            $('#alertBox').removeClass('hide');
+            $('#alertBox').delay(5000).slideUp(500);
+        })
+        function DisplayProgressMessage(ctl, msg) {
+            //if use the submit button, you can use event.preventDefault to prevent the default submit form behavior.
+            event.preventDefault();
+            // Turn off the "Save" button and change text
+            $(ctl).prop("disabled", true).val(msg);
+            // Gray out background on page
+            $("body").addClass("submit-progress-bg");
+            // Wrap in setTimeout so the UI can update the spinners
+            $(".processing-preview").removeClass("hidden");
+            //submit the form.
+            setTimeout(function () {
+                $("#form-search").submit();
+            }, 1000);
+            return true;
+        }
+        function callIndexAction(select) {
+            var selectedValue = select.value;
+            // Gray out background on page
+            $("body").addClass("submit-progress-bg");
+            // Wrap in setTimeout so the UI can update the spinners
+            $(".processing-preview").removeClass("hidden");
+            setTimeout(function () {
+                $("#form-search").submit();
+            }, 1000);
+        }
+
+
+    </script>
+                    }
